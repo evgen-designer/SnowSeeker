@@ -23,6 +23,15 @@ struct ResortView: View {
                 Image(decorative: resort.id)
                     .resizable()
                     .scaledToFit()
+                    .overlay(alignment: .bottomTrailing) {
+                        Text("Photo: \(resort.imageCredit)")
+                            .padding(6)
+                            .background(.black.opacity(0.4))
+                            .foregroundStyle(.white)
+                            .font(.caption)
+                            .clipShape(.rect(cornerRadius: 5))
+                            .padding(4)
+                    }
                 
                 HStack {
                     if horizontalSizeClass == .compact && dynamicTypeSize > .large {

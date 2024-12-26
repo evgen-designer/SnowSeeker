@@ -12,12 +12,28 @@ struct ContentView: View {
     
     @State private var favorites = Favorites()
     @State private var searchText = ""
+    @State private var sortOrder = SortOrder.default
+    
+    enum SortOrder {
+        case `default`, alphabetical, country
+    }
     
     var filteredResorts: [Resort] {
+        let orderedResorts: [Resort]
+        
+        switch sortOrder {
+        case .default:
+            orderedResorts = resorts
+        case .alphabetical:
+            orderedResorts = resorts.sorted { $0.name < $1.name }
+        case .country:
+            orderedResorts = resorts.sorted { $0.country < $1.country }
+        }
+        
         if searchText.isEmpty {
-            resorts
+            return orderedResorts
         } else {
-            resorts.filter { $0.name.localizedStandardContains(searchText) }
+            return orderedResorts.filter { $0.name.localizedStandardContains(searchText) }
         }
     }
     
@@ -50,8 +66,6 @@ struct ContentView: View {
                             Image(systemName: "heart.fill")
                                 .accessibilityLabel("This is a favorite resort")
                                 .foregroundStyle(.red)
-                        } else {
-                            
                         }
                     }
                 }
@@ -61,6 +75,13 @@ struct ContentView: View {
                 ResortView(resort: resort)
             }
             .searchable(text: $searchText, prompt: "Search for a resort")
+            .toolbar {
+                Menu("Sort") {
+                    Button("Default") { sortOrder = .default }
+                    Button("Alphabetical") { sortOrder = .alphabetical }
+                    Button("By country") { sortOrder = .country }
+                }
+            }
         } detail: {
             WelcomeView()
         }
